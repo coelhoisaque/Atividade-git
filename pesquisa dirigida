@@ -1,0 +1,109 @@
+*FETCH E PULL*
+
+• Use git fetch se você quiser ver o que há de novo no repositório remoto (as alterações ficarão visíveis na sua ramificação de rastreamento remoto, como origin/main), mas ainda não estiver pronto para integrar essas mudanças em sua linha de trabalho principal.
+
+
+• Use git pull se você quiser atualizar imediatamente sua ramificação de trabalho local com as últimas alterações do repositório remoto e estiver confiante de que a mesclagem será tranquila. 
+
+*GIT MERGE*
+
+O git merge realiza uma integração não destrutiva, preservando o histórico completo de desenvolvimento. 
+
+Como funciona: Ele identifica o ancestral comum mais recente entre as duas branches e, em seguida, cria um novo "commit de merge" que une as alterações de ambas.
+
+Histórico: Cria um histórico de commits que mostra claramente quando e onde as branches divergiram e foram reunidas, o que resulta em um histórico não linear com vários merge commits.
+
+Melhor para: Branches públicas ou compartilhadas onde a preservação do histórico exato é importante para a auditoria e colaboração da equipe. 
+
+*GIT REBASE*
+
+O git rebase reescreve o histórico do projeto, resultando em uma linha do tempo de commits mais limpa e linear. 
+
+
+
+*GIT REVERT E GIT RESET*
+
+O git revert reverte as alterações de um commit antigo, e assim que ele reverter, ele cria um commit novo com os dados revertidos, ou seja, ele não modifica nenhum dos commits anteriores.
+
+O git reset é um pouco diferente, ele modifica para qual commit o "ponteiro" da branch está apontado. Você pode utilizar isso para desfazer alguma alteração, mas tem que tomar cuidado porque você vai modificar todo o histórico de commits.
+
+Em linhas gerais, o que pode ser feito é o seguinte, se um commit foi feito, mandado para o github, e depois você vê que ele precisa ser desfeito, use o "git revert" para reverter ele.
+
+________________________________________
+
+*HEAD*
+
+O HEAD, no caso, é simplesmente um ponteiro para um commit específico (que pode ou não estar sendo apontado por um branch). É claro que, para simplificar, costuma-se dizer que o HEAD aponta para o "branch atual", mas na verdade ele pode apontar para qualquer commit, inclusive algum que não esteja sendo referenciado por nenhum branch (mais detalhes abaixo, na seção "HEAD não é exatamente o branch atual").
+
+De qualquer forma, é assim que o Git sabe onde adicionar o próximo commit. Por exemplo, se meu repositório estivesse como o diagrama acima, e eu criasse um novo commit, onde ele seria adicionado?
+
+Se o HEAD estivesse apontando para o branch master, ele seria adicionado depois do "segundo commit":
+
+
+Adicionar commit no branch master
++-----------------+     +----------------+     +---------------+
+| primeiro commit | <-- | segundo commit | <-- | quarto commit | <-- master (HEAD)
++-----------------+     +----------------+     +---------------+
+                                 ↑
+                        +-----------------+
+                        | terceiro commit | <-- new_branch
+                        +-----------------+
+
+Mas se o HEAD estivesse apontando para o branch new_branch, ele seria adicionado depois do "terceiro commit":
+
+Adicionar commit no branch new_branch
++-----------------+     +----------------+
+| primeiro commit | <-- | segundo commit |  <-- master
++-----------------+     +----------------+
+                                 ↑
+                        +-----------------+
+                        | terceiro commit |
+                        +-----------------+
+                                 ↑
+                        +-----------------+
+                        |  quarto commit  | <-- new_branch (HEAD)
+                        +-------------
+
+
+
+
+
+*STAGING AREA*
+
+Uma staging area (área de preparação) é um local intermediário de armazenamento, físico ou virtual, usado para reunir, organizar e validar dados ou arquivos antes de sua transferência final para o destino, como um Data Warehouse, sistema Git, ou ambiente de produção. Ela garante limpeza e integridade, minimizando impactos nos sistemas de origem.
+
+*BRANCH*
+
+O comando git branch é fundamental no Git para gerenciar linhas de desenvolvimento independentes (ramificações), permitindo criar, listar, renomear e excluir branches. Eles agem como ponteiros móveis para commits, isolando novas funcionalidades ou correções de bugs sem afetar a ramificação principal (main ou master). 
+
+Principais Comandos git branch
+git branch: Lista todos os branches locais; o atual é destacado.
+git branch <nome-da-branch>: Cria uma nova branch a partir do commit atual.
+git branch -d <nome-da-branch>: Exclui uma branch localmente (apenas se já mesclada).
+
+*CONFLITO DE MERGE*
+
+Um conflito de merge no Git ocorre quando alterações concorrentes em arquivos são feitas em branches diferentes, e o Git não consegue decidir automaticamente qual versão manter, geralmente quando linhas idênticas são editadas simultaneamente. O processo de merge é pausado para que o desenvolvedor resolva manualmente os conflitos, marcando os arquivos afetados.
+
+*STASH, STASH, SWITCH, RESTORE, CHECKOUT*
+
+
+Use git stash para salvar alterações temporariamente, git switch para trocar de branch com segurança, e git restore para descartar modificações em arquivos locais. O git checkout é um comando versátil, mas foi substituído por switch (branches) e restore (arquivos) nas versões modernas do Git para maior clareza. 
+
+Quando utilizar cada comando:
+git stash: Utilize quando estiver no meio de uma tarefa, mas precisar mudar para outra branch urgentemente sem fazer commit de código incompleto. Ele limpa o diretório de trabalho, salvando as alterações (staged ou não) para depois.
+
+Comandos úteis: git stash (salvar), git stash pop (reaplicar e remover), git stash list (listar).
+
+git switch: Utilize exclusivamente para alternar entre branches (git switch nome-da-branch) ou criar/alternar para uma nova (git switch -c nova-branch). É mais seguro e específico que o checkout para essa finalidade.
+
+git restore: Utilize para descartar alterações em arquivos locais que ainda não foram comitados, revertendo-os ao estado do último commit (HEAD).
+
+Comandos úteis: git restore <arquivo> (desfazer alterações locais), git restore --staged <arquivo> (tirar do stage/area de preparo).
+
+git checkout: Comando "legado" que faz tudo: muda de branch (checkout branch), restaura arquivos (checkout -- arquivo) ou inspeciona commits antigos. Em projetos modernos, prefira switch e restore. 
+
+Resumo prático:
+Precisa parar o trabalho e mudar de branch? Stash.
+Precisa mudar de branch? Switch.
+Fez caca em um arquivo e quer voltar ao normal? Restore.
